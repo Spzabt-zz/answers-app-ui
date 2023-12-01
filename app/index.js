@@ -1,5 +1,6 @@
 import { View, Text } from 'react-native';
 
+// todo: registration
 const Home = () => {
   return (
     <View>
