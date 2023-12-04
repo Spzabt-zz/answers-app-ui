@@ -1,45 +1,29 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { Stack } from 'expo-router';
+import { View, ScrollView, SafeAreaView, Text, StyleSheet } from 'react-native';
+
+import { COLORS, icons, images, SIZES } from '../constants';
+import { ScreenHeaderBtn, LoginRegisterBtn } from '../components';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    padding: SIZES.medium,
+  },
+  homeText: {
+    textAlign: 'center',
+    marginTop: '20%',
+    marginLeft: 15,
+    marginRight: 15,
+    fontSize: 34,
+    fontWeight: 'bold',
   },
 });
 
-// const App = () => {
-//   const [count, setCount] = useState(0);
-
-//   return (
-//     <View style={styles.container}>
-//       <Text>You clicked {count} times</Text>
-//       <Button
-//         onPress={() => setCount(count + 1)}
-//         title="Click me!"
-//       />
-//     </View>
-//   );
-// };
-
 const Home = () => {
-  // let myState =
-  //     'Lorem ipsum dolor sit amet, consectetur adipisicing elit, used do eiusmod' +
-  //     'tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis' +
-  //     'nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat' +
-  //     'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu' +
-  //     'fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in' +
-  //     'culpa qui officia deserunt mollit anim id est laborum.';
-
-  let initialState =
-    'Lorem ipsum dolor sit amet, consectetur adipisicing elit, used do eiusmod' +
-    'tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis' +
-    'nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat' +
-    'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu' +
-    'fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in' +
-    'culpa qui officia deserunt mollit anim id est laborum.';
+  let initialState = 'НАШЕ ПРИЛОЖЕНИЕ ОТВЕТИТ НА ЛЮБОЙ ТВОЙ ВОПРОС';
 
   let newState = 'new state';
 
@@ -47,25 +31,41 @@ const Home = () => {
 
   const handlePress = () => {
     updateText((prevState) => {
-      console.log(prevState);
       return prevState === initialState ? newState : initialState;
     });
   };
 
   return (
-    <View>
-      <Text
-        onPress={handlePress}
-        // onPress={() => {
-        //   prevState = myState;
-        //   updateText(newState);
-        //   newState = prevState;
-        //   //newState = initialState;
-        // }}
-      >
-        {myState}
-      </Text>
-    </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>
+      <Stack.Screen
+        options={{
+          headerStyle: { backgroundColor: COLORS.lightWhite },
+          headerShadowVisible: false,
+          headerLeft: () => (
+            <ScreenHeaderBtn iconUrl={icons.moderator} dimension="60%" />
+          ),
+          headerRight: () => (
+            <ScreenHeaderBtn iconUrl={icons.menu} dimension="100%" />
+          ),
+          headerTitle: '',
+        }}
+      />
+
+      <ScrollView>
+        <Text style={styles.homeText} onPress={handlePress}>
+          {myState}
+        </Text>
+
+        <View style={styles.container}>
+          <LoginRegisterBtn text="РЕГИСТРАЦИЯ" />
+          <LoginRegisterBtn text="АВТОРИЗАЦИЯ" />
+
+          <Text style={styles.homeText}>
+            Detailed information how everything works
+          </Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
