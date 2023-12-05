@@ -35,6 +35,10 @@ const Home = () => {
     });
   };
 
+  const registerPress = () => {
+    console.log('Registration stuff');
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>
       <Stack.Screen
@@ -57,7 +61,7 @@ const Home = () => {
         </Text>
 
         <View style={styles.container}>
-          <LoginRegisterBtn text="РЕГИСТРАЦИЯ" />
+          <LoginRegisterBtn text="РЕГИСТРАЦИЯ" onPress={registerPress} />
           <LoginRegisterBtn text="АВТОРИЗАЦИЯ" />
 
           <Text style={styles.homeText}>
