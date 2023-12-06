@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import { Stack } from 'expo-router';
-import { View, ScrollView, SafeAreaView, Text, StyleSheet } from 'react-native';
+import {
+  View,
+  ScrollView,
+  SafeAreaView,
+  Text,
+  StyleSheet,
+  Alert,
+} from 'react-native';
 
 import { COLORS, icons, images, SIZES } from '../constants';
 import { ScreenHeaderBtn, LoginRegisterBtn } from '../components';
@@ -36,7 +43,7 @@ const Home = () => {
   };
 
   const registerPress = () => {
-    console.log('Registration stuff');
+    Alert.alert('Registration stuff!');
   };
 
   return (
@@ -45,8 +52,13 @@ const Home = () => {
         options={{
           headerStyle: { backgroundColor: COLORS.lightWhite },
           headerShadowVisible: false,
+          statusBarColor: COLORS.darkBlue,
           headerLeft: () => (
-            <ScreenHeaderBtn iconUrl={icons.moderator} dimension="60%" />
+            <ScreenHeaderBtn
+              iconUrl={icons.moderator}
+              dimension="60%"
+              activeOpacity={1}
+            />
           ),
           headerRight: () => (
             <ScreenHeaderBtn iconUrl={icons.menu} dimension="100%" />
@@ -61,8 +73,12 @@ const Home = () => {
         </Text>
 
         <View style={styles.container}>
-          <LoginRegisterBtn text="РЕГИСТРАЦИЯ" onPress={registerPress} />
-          <LoginRegisterBtn text="АВТОРИЗАЦИЯ" />
+          <LoginRegisterBtn
+            text="РЕГИСТРАЦИЯ"
+            path="security/registration"
+            // handlePress={registerPress}
+          />
+          <LoginRegisterBtn text="АВТОРИЗАЦИЯ" path="security/login" />
 
           <Text style={styles.homeText}>
             Detailed information how everything works

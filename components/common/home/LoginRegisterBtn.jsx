@@ -1,13 +1,16 @@
 import React from 'react'
 import { TouchableOpacity, Image, Text } from 'react-native'
+import { Link } from 'expo-router'
 
 import styles from './loginregister.style'
 
-const ScreenHeaderBtn = ({text, handlePress}) => {
+const ScreenHeaderBtn = ({text, path, handlePress}) => {
   return (
-    <TouchableOpacity style={styles.btnContainer} onPress={handlePress}>
-      <Text style={styles.btnText}>{text}</Text>
-    </TouchableOpacity>
+    <Link href={path} asChild>
+      <TouchableOpacity style={styles.btnContainer} onPress={handlePress}>
+        <Text style={styles.btnText}>{text}</Text>
+      </TouchableOpacity>
+    </Link>
   )
 }
 
