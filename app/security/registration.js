@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Stack, Link, router } from 'expo-router';
-import { CountryPicker } from 'react-native-country-codes-picker';
+import CountryPicker from 'react-native-country-picker-modal';
+
 import {
   Text,
   SafeAreaView,
@@ -47,15 +48,33 @@ const styles = StyleSheet.create({
 });
 
 const Registration = () => {
+  const [countryCode, setCountryCode] = useState('UA');
+  const [country, setCountry] = useState({
+    cca2: 'UA',
+    callingCode: ['380'],
+  });
+  const [withCountryNameButton, setWithCountryNameButton] = useState(false);
+  const [withFlag, setWithFlag] = useState(false);
+  const [withEmoji, setWithEmoji] = useState(false);
+  const [withFilter, setWithFilter] = useState(true);
+  const [withAlphaFilter, setWithAlphaFilter] = useState(false);
+  const [withCallingCode, setWithCallingCode] = useState(true);
+
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
   const [username, setUsername] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('+' + country.callingCode[0]);
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
 
-  const [show, setShow] = useState(false);
-  const [countryCode, setCountryCode] = useState('');
+  const onSelect = (country) => {
+    setCountryCode(country.cca2);
+    setCountry(country);
+
+    country.callingCode[0] !== undefined
+      ? setPhoneNumber(`+${country.callingCode[0]}`)
+      : setPhoneNumber('');
+  };
 
   const handleBackPress = () => {
     router.replace('../');
@@ -123,40 +142,48 @@ const Registration = () => {
             defaultValue={username}
           />
 
-          <TextInput
-            style={styles.textInputStyle}
-            placeholder="Phone Number"
-            onChangeText={(phoneNumber) => setPhoneNumber(phoneNumber)}
-            defaultValue={phoneNumber}
-          >
-            {/* <TouchableOpacity
-              onPress={() => setShow(true)}
-              style={{
-                width: '80%',
-                height: 60,
-                backgroundColor: 'black',
-                padding: 10,
-              }}
-            >
-              <Text
-                style={{
-                  color: 'white',
-                  fontSize: 20,
-                }}
-              >
-                {countryCode}
-              </Text>
-            </TouchableOpacity> */}
-          </TextInput>
-
-          {/* <CountryPicker
-            show={show}
-            // when picker button press you will get the country object with dial code
-            pickerButtonOnPress={(item) => {
-              setCountryCode(item.dial_code);
-              setShow(false);
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
             }}
-          /> */}
+          >
+            <CountryPicker
+              {...{
+                countryCode,
+                withFilter,
+                withFlag,
+                withCountryNameButton,
+                withAlphaFilter,
+                withCallingCode,
+                withEmoji,
+                onSelect,
+              }}
+              visible={false}
+              translation="common"
+            />
+            <TextInput
+              style={{
+                flex: 1, // Take up remaining space in the row
+                marginLeft: 0, // Add some space between CountryPicker and TextInput
+                height: 40, // Set the desired height
+                borderRadius: 20,
+                paddingHorizontal: SIZES.xLarge,
+                backgroundColor: COLORS.white2,
+                marginVertical: 10,
+                // height: 40,
+                // width: '95%',
+                // backgroundColor: COLORS.white2,
+                // borderRadius: 20,
+                // paddingStart: SIZES.xLarge,
+                // paddingEnd: SIZES.xLarge,
+                // margin: 10,
+              }}
+              placeholder="Phone Number"
+              onChangeText={(phoneNumber) => setPhoneNumber(phoneNumber)}
+              defaultValue={phoneNumber}
+            />
+          </View>
 
           <TextInput
             style={styles.textInputStyle}
@@ -170,7 +197,6 @@ const Registration = () => {
             onChangeText={(repeatPassword) => setRepeatPassword(repeatPassword)}
             defaultValue={repeatPassword}
           />
-
           <TouchableOpacity style={styles.btnContainer}>
             <Text style={styles.btnText}>Create Account</Text>
           </TouchableOpacity>

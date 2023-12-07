@@ -30,22 +30,6 @@ const styles = StyleSheet.create({
 });
 
 const Home = () => {
-  let initialState = 'НАШЕ ПРИЛОЖЕНИЕ ОТВЕТИТ НА ЛЮБОЙ ТВОЙ ВОПРОС';
-
-  let newState = 'new state';
-
-  const [myState, updateText] = useState(initialState);
-
-  const handlePress = () => {
-    updateText((prevState) => {
-      return prevState === initialState ? newState : initialState;
-    });
-  };
-
-  const registerPress = () => {
-    Alert.alert('Registration stuff!');
-  };
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>
       <Stack.Screen
@@ -68,16 +52,12 @@ const Home = () => {
       />
 
       <ScrollView>
-        <Text style={styles.homeText} onPress={handlePress}>
-          {myState}
+        <Text style={styles.homeText}>
+          НАШЕ ПРИЛОЖЕНИЕ ОТВЕТИТ НА ЛЮБОЙ ТВОЙ ВОПРОС
         </Text>
 
         <View style={styles.container}>
-          <LoginRegisterBtn
-            text="РЕГИСТРАЦИЯ"
-            path="security/registration"
-            // handlePress={registerPress}
-          />
+          <LoginRegisterBtn text="РЕГИСТРАЦИЯ" path="security/registration" />
           <LoginRegisterBtn text="АВТОРИЗАЦИЯ" path="security/login" />
 
           <Text style={styles.homeText}>
