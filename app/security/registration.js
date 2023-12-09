@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Stack, Link, router } from 'expo-router';
 import CountryPicker from 'react-native-country-picker-modal';
+import axios, { HttpStatusCode } from 'axios';
 
 import {
   Text,
@@ -10,6 +11,8 @@ import {
   TextInput,
   StyleSheet,
   TouchableOpacity,
+  Image,
+  Alert,
 } from 'react-native';
 import { SIZES, COLORS, icons } from '../../constants';
 import { ScreenHeaderBtn } from '../../components';
@@ -23,7 +26,7 @@ const styles = StyleSheet.create({
   },
   textInputStyle: {
     height: 40,
-    width: '95%',
+    width: '100%',
     backgroundColor: COLORS.white2,
     borderRadius: 20,
     paddingStart: SIZES.xLarge,
@@ -32,7 +35,7 @@ const styles = StyleSheet.create({
   },
   btnContainer: {
     height: 40,
-    width: '95%',
+    width: '100%',
     backgroundColor: COLORS.red2,
     borderRadius: SIZES.small / 1.25,
     justifyContent: 'center',
@@ -48,10 +51,14 @@ const styles = StyleSheet.create({
 });
 
 const Registration = () => {
+  const baseUrl = 'https://answers-ccff058443b8.herokuapp.com/api/v1/auth';
+  const REGISTRATION = '/registration';
+
   const [countryCode, setCountryCode] = useState('UA');
   const [country, setCountry] = useState({
     cca2: 'UA',
     callingCode: ['380'],
+    flag: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAeBAMAAACs80HuAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAABtQTFRFJoz/J43+Ior/NZTu8Pcc//8H/v4M//8L////WTbNKwAAAAFiS0dECIbelXoAAAAJcEhZcwAAAEgAAABIAEbJaz4AAAAoSURBVCjPY2AYwUAQC2BQwgIYjLEABhcsgCEUC2BIwwIYyrGAESIIAFnli3Xgo9d8AAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDEzLTEwLTA3VDEzOjE0OjU2KzAyOjAwsgYwawAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMy0xMC0wN1QxMzoxNDo1NiswMjowMMNbiNcAAAAASUVORK5CYII=',
   });
   const [withCountryNameButton, setWithCountryNameButton] = useState(false);
   const [withFlag, setWithFlag] = useState(false);
@@ -59,6 +66,8 @@ const Registration = () => {
   const [withFilter, setWithFilter] = useState(true);
   const [withAlphaFilter, setWithAlphaFilter] = useState(false);
   const [withCallingCode, setWithCallingCode] = useState(true);
+  const [isCountryPickerVisible, setCountryPickerVisible] = useState(false);
+  const [flag, setFlag] = useState(country.flag);
 
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
@@ -70,14 +79,50 @@ const Registration = () => {
   const onSelect = (country) => {
     setCountryCode(country.cca2);
     setCountry(country);
+    setFlag(country.flag);
 
     country.callingCode[0] !== undefined
       ? setPhoneNumber(`+${country.callingCode[0]}`)
       : setPhoneNumber('');
+
+    setCountryPickerVisible(false);
+  };
+
+  const onClose = () => {
+    setCountryPickerVisible(false);
   };
 
   const handleBackPress = () => {
     router.replace('../');
+  };
+
+  const handleRegistration = async () => {
+    try {
+      const response = await axios.post(baseUrl + REGISTRATION, {
+        email,
+        fullName,
+        username,
+        phoneNumber,
+        password,
+        repeatPassword,
+      });
+
+      if (response.status == HttpStatusCode.Created) {
+        // Registration successful, you might want to handle this in your application
+        Alert.alert(
+          'Success',
+          'Registration successful! Please click the activation link we sent to your email.'
+        );
+      } else {
+        // Registration failed, display the error message
+        Alert.alert('Error', response.data.error || 'Registration failed');
+      }
+
+      handleBackPress();
+    } catch (error) {
+      console.error('Error during registration:', error.response.data.error);
+      Alert.alert('Error', 'An unexpected error occurred');
+    }
   };
 
   return (
@@ -101,7 +146,7 @@ const Registration = () => {
         }}
       />
 
-      <View style={{ flex: 1 }}>
+      <ScrollView style={{ flex: 1 }}>
         <View
           style={{
             backgroundColor: COLORS.red2,
@@ -128,61 +173,82 @@ const Registration = () => {
             placeholder="example@gmail.com"
             onChangeText={(newEmail) => setEmail(newEmail)}
             defaultValue={email}
+            keyboardType={'email-address'}
+            textContentType="emailAddress"
           />
           <TextInput
             style={styles.textInputStyle}
             placeholder="Full Name"
             onChangeText={(fullName) => setFullName(fullName)}
             defaultValue={fullName}
+            textContentType="name"
           />
           <TextInput
             style={styles.textInputStyle}
             placeholder="Username"
             onChangeText={(username) => setUsername(username)}
             defaultValue={username}
+            textContentType="nickname"
           />
 
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
-          >
-            <CountryPicker
-              {...{
-                countryCode,
-                withFilter,
-                withFlag,
-                withCountryNameButton,
-                withAlphaFilter,
-                withCallingCode,
-                withEmoji,
-                onSelect,
-              }}
-              visible={false}
-              translation="common"
-            />
-            <TextInput
+          <View style={{ position: 'relative', marginVertical: 10 }}>
+            <View
               style={{
-                flex: 1, // Take up remaining space in the row
-                marginLeft: 0, // Add some space between CountryPicker and TextInput
-                height: 40, // Set the desired height
-                borderRadius: 20,
-                paddingHorizontal: SIZES.xLarge,
-                backgroundColor: COLORS.white2,
-                marginVertical: 10,
-                // height: 40,
-                // width: '95%',
-                // backgroundColor: COLORS.white2,
-                // borderRadius: 20,
-                // paddingStart: SIZES.xLarge,
-                // paddingEnd: SIZES.xLarge,
-                // margin: 10,
+                flexDirection: 'row',
+                // alignItems: 'center',
               }}
-              placeholder="Phone Number"
-              onChangeText={(phoneNumber) => setPhoneNumber(phoneNumber)}
-              defaultValue={phoneNumber}
-            />
+            >
+              <TextInput
+                style={{
+                  // flex: 1,
+                  // marginLeft: 0,
+                  height: 40,
+                  width: '100%',
+                  borderRadius: 20,
+                  paddingHorizontal: SIZES.xxLarge,
+                  backgroundColor: COLORS.white2,
+                }}
+                placeholder="Phone Number"
+                onChangeText={(phoneNumber) => setPhoneNumber(phoneNumber)}
+                defaultValue={phoneNumber}
+                keyboardType="phone-pad"
+                textContentType="telephoneNumber"
+              />
+              <TouchableOpacity
+                style={{
+                  position: 'absolute',
+                  left: 10,
+                  top: 13,
+                  zIndex: 1,
+                }}
+                onPress={() => setCountryPickerVisible(true)}
+              >
+                <Image
+                  style={{ height: 15, width: 20 }}
+                  source={{
+                    uri: flag,
+                  }}
+                />
+              </TouchableOpacity>
+            </View>
+
+            {isCountryPickerVisible && (
+              <CountryPicker
+                {...{
+                  countryCode,
+                  withFilter,
+                  withFlag,
+                  withCountryNameButton,
+                  withAlphaFilter,
+                  withCallingCode,
+                  withEmoji,
+                  onSelect,
+                  onClose,
+                }}
+                visible={isCountryPickerVisible}
+                translation="common"
+              />
+            )}
           </View>
 
           <TextInput
@@ -190,18 +256,30 @@ const Registration = () => {
             placeholder="Password"
             onChangeText={(password) => setPassword(password)}
             defaultValue={password}
+            textContentType="password"
+            passwordRules="required: upper; required: lower; required: digit; minlength: 8;"
+            secureTextEntry={true}
+            autoCorrect={false}
           />
+
           <TextInput
             style={styles.textInputStyle}
             placeholder="Repeat Password"
             onChangeText={(repeatPassword) => setRepeatPassword(repeatPassword)}
             defaultValue={repeatPassword}
+            textContentType="password"
+            secureTextEntry={true}
+            autoCorrect={false}
           />
-          <TouchableOpacity style={styles.btnContainer}>
+
+          <TouchableOpacity
+            style={styles.btnContainer}
+            onPress={handleRegistration}
+          >
             <Text style={styles.btnText}>Create Account</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
