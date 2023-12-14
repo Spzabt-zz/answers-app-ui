@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   Image,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { SIZES, COLORS, icons } from '../../constants';
 import { ScreenHeaderBtn } from '../../components';
@@ -47,6 +48,9 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontSize: 20,
     fontWeight: '700',
+  },
+  link: {
+    color: 'blue',
   },
 });
 
@@ -278,6 +282,13 @@ const Registration = () => {
           >
             <Text style={styles.btnText}>Create Account</Text>
           </TouchableOpacity>
+
+          <View style={{ flexDirection: 'row', marginTop: 20 }}>
+            <Text>Already have an account? </Text>
+            <TouchableOpacity onPress={() => router.replace('./login')}>
+              <Text style={styles.link}>Login</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>

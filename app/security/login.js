@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
 const Login = () => {
   const heightOfLoginContainer = 250;
 
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const handleBackPress = () => {
@@ -146,12 +146,12 @@ const Login = () => {
           >
             <TextInput
               style={styles.textInputStyle}
-              placeholder="example@gmail.com"
-              onChangeText={(newEmail) => setEmail(newEmail)}
-              defaultValue={email}
-              keyboardType={'email-address'}
-              textContentType="emailAddress"
+              placeholder="Username"
+              onChangeText={(username) => setUsername(username)}
+              defaultValue={username}
+              textContentType="nickname"
             />
+
             <TextInput
               style={styles.textInputStyle}
               placeholder="Password"
