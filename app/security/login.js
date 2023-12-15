@@ -13,6 +13,9 @@ import {
 
 import { COLORS, SIZES, icons } from '../../constants';
 import { ScreenHeaderBtn } from '../../components';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Spinner from 'react-native-loading-spinner-overlay';
+import axios from 'axios';
 
 const styles = StyleSheet.create({
   container: {
@@ -61,8 +64,74 @@ const Login = () => {
     router.replace('../');
   };
 
+  const BASE_URL = 'https://answers-ccff058443b8.herokuapp.com/api/v1/auth';
+
+  const [userInfo, setUserInfo] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+
+  const login = async (username, password) => {
+    // setIsLoading(true);
+
+    let userInfo = await AsyncStorage.getItem('userInfo');
+    userInfo = JSON.parse(userInfo);
+
+    console.log(
+      'Request Payload:',
+      username,
+      password,
+      userInfo,
+      typeof userInfo.jwt_token
+    );
+
+    // axios
+    //   .get('https://answers-ccff058443b8.herokuapp.com/api/v1', {
+    //     headers: {
+    //       Authorization: 'Bearer ' + userInfo.jwt_token,
+    //     },
+    //   })
+    //   .then((response) => {
+    //     // Handle success
+    //     console.log(response.data);
+    //   })
+    //   .catch((error) => {
+    //     // Handle error
+    //     console.error(error.response.data);
+    //   });
+    axios
+      .post(
+        `${BASE_URL}/login`,
+        {
+          username,
+          password,
+        },
+        {
+          headers: {
+            Authorization: 'Bearer ' + userInfo.jwt_token,
+          },
+        }
+      )
+      .then((res) => {
+        let userInfo = res.data;
+        console.log(userInfo);
+        setUserInfo(userInfo);
+        AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+        setIsLoading(false);
+      })
+      .catch((e) => {
+        console.log(`Login error: ${e.response.data}`);
+
+        console.log('Login error:', e);
+
+        // Log specific properties of the error object
+        console.log('Error status:', e.response.status);
+        console.log('Error data:', e.response.data);
+        setIsLoading(false);
+      });
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      <Spinner visible={isLoading} />
       <Stack.Screen
         options={{
           headerStyle: { backgroundColor: COLORS.red2 },
@@ -162,7 +231,12 @@ const Login = () => {
               secureTextEntry={true}
               autoCorrect={false}
             />
-            <TouchableOpacity style={styles.btnContainer}>
+            <TouchableOpacity
+              style={styles.btnContainer}
+              onPress={() => {
+                login(username, password);
+              }}
+            >
               <Text style={styles.btnText}>Login</Text>
             </TouchableOpacity>
           </View>

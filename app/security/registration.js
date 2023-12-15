@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { Stack, Link, router } from 'expo-router';
 import CountryPicker from 'react-native-country-picker-modal';
 import axios, { HttpStatusCode } from 'axios';
+import Spinner from 'react-native-loading-spinner-overlay';
+import { AuthContext } from '../context/AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {
   Text,
@@ -100,37 +103,75 @@ const Registration = () => {
     router.replace('../');
   };
 
-  const handleRegistration = async () => {
-    try {
-      const response = await axios.post(baseUrl + REGISTRATION, {
+  // const handleRegistration = async () => {
+  //   try {
+  //     const response = await axios.post(baseUrl + REGISTRATION, {
+  //       email,
+  //       fullName,
+  //       username,
+  //       phoneNumber,
+  //       password,
+  //       repeatPassword,
+  //     });
+
+  //     if (response.status == HttpStatusCode.Created) {
+  //       // Registration successful, you might want to handle this in your application
+  //       Alert.alert(
+  //         'Success',
+  //         'Registration successful! Please click the activation link we sent to your email.'
+  //       );
+  //     } else {
+  //       // Registration failed, display the error message
+  //       Alert.alert('Error', response.data.error || 'Registration failed');
+  //     }
+
+  //     handleBackPress();
+  //   } catch (error) {
+  //     console.error('Error during registration:', error.response.data.error);
+  //     Alert.alert('Error', 'An unexpected error occurred');
+  //   }
+  // };
+
+  const BASE_URL = 'https://answers-ccff058443b8.herokuapp.com/api/v1/auth';
+
+  const [userInfo, setUserInfo] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+
+  const register = (
+    email,
+    fullName,
+    username,
+    phoneNumber,
+    password,
+    repeatPassword
+  ) => {
+    setIsLoading(true);
+
+    axios
+      .post(`${BASE_URL}/registration`, {
         email,
         fullName,
         username,
         phoneNumber,
         password,
         repeatPassword,
+      })
+      .then((res) => {
+        let userInfo = res.data;
+        setUserInfo(userInfo);
+        AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+        setIsLoading(false);
+        console.log(userInfo);
+      })
+      .catch((e) => {
+        console.log(`register error ${e}`);
+        setIsLoading(false);
       });
-
-      if (response.status == HttpStatusCode.Created) {
-        // Registration successful, you might want to handle this in your application
-        Alert.alert(
-          'Success',
-          'Registration successful! Please click the activation link we sent to your email.'
-        );
-      } else {
-        // Registration failed, display the error message
-        Alert.alert('Error', response.data.error || 'Registration failed');
-      }
-
-      handleBackPress();
-    } catch (error) {
-      console.error('Error during registration:', error.response.data.error);
-      Alert.alert('Error', 'An unexpected error occurred');
-    }
   };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.gray3 }}>
+      <Spinner visible={isLoading} />
       <Stack.Screen
         options={{
           headerStyle: { backgroundColor: COLORS.red2 },
@@ -278,7 +319,16 @@ const Registration = () => {
 
           <TouchableOpacity
             style={styles.btnContainer}
-            onPress={handleRegistration}
+            onPress={() => {
+              register(
+                email,
+                fullName,
+                username,
+                phoneNumber,
+                password,
+                repeatPassword
+              );
+            }}
           >
             <Text style={styles.btnText}>Create Account</Text>
           </TouchableOpacity>

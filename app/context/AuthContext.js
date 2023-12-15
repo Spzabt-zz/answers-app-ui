@@ -99,6 +99,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       setSplashLoading(false);
+      console.log('in isLoggedIn method, userInfo: ' + userInfo.jwt_token);
     } catch (e) {
       setSplashLoading(false);
       console.log(`is logged in error ${e}`);
