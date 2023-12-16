@@ -70,7 +70,7 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const login = async (username, password) => {
-    // setIsLoading(true);
+    setIsLoading(true);
 
     let userInfo = await AsyncStorage.getItem('userInfo');
     userInfo = JSON.parse(userInfo);
@@ -83,20 +83,6 @@ const Login = () => {
       typeof userInfo.jwt_token
     );
 
-    // axios
-    //   .get('https://answers-ccff058443b8.herokuapp.com/api/v1', {
-    //     headers: {
-    //       Authorization: 'Bearer ' + userInfo.jwt_token,
-    //     },
-    //   })
-    //   .then((response) => {
-    //     // Handle success
-    //     console.log(response.data);
-    //   })
-    //   .catch((error) => {
-    //     // Handle error
-    //     console.error(error.response.data);
-    //   });
     axios
       .post(
         `${BASE_URL}/login`,

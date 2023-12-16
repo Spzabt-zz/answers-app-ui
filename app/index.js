@@ -1,12 +1,13 @@
 import { AuthProvider } from './context/AuthContext';
 import Home from './screens/home';
+import React from 'react';
 
-const Main = () => {
+const App = () => {
   return (
-    <AuthProvider>
-      <Home />
-    </AuthProvider>
+    // <AuthProvider>
+    <Home />
+    // </AuthProvider>
   );
 };
 
-export default Main;
+export default App;

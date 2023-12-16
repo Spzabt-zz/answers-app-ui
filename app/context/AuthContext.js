@@ -98,6 +98,8 @@ export const AuthProvider = ({ children }) => {
         setUserInfo(userInfo);
       }
 
+      await new Promise((r) => setTimeout(r, 5000));
+
       setSplashLoading(false);
       console.log('in isLoggedIn method, userInfo: ' + userInfo.jwt_token);
     } catch (e) {
