@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Stack, router } from 'expo-router';
 import {
   Text,
@@ -16,6 +16,7 @@ import { ScreenHeaderBtn } from '../../components';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Spinner from 'react-native-loading-spinner-overlay';
 import axios from 'axios';
+import { AuthContext } from '../context/AuthContext';
 
 const styles = StyleSheet.create({
   container: {
@@ -52,6 +53,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
   },
+  link: {
+    color: 'blue',
+  },
 });
 
 const Login = () => {
@@ -61,59 +65,15 @@ const Login = () => {
   const [password, setPassword] = useState('');
 
   const handleBackPress = () => {
-    router.replace('../');
+    router.replace('../screens/logreg');
   };
 
   const BASE_URL = 'https://answers-ccff058443b8.herokuapp.com/api/v1/auth';
 
-  const [userInfo, setUserInfo] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
+  // const [userInfo, setUserInfo] = useState({});
+  // const [isLoading, setIsLoading] = useState(false);
 
-  const login = async (username, password) => {
-    setIsLoading(true);
-
-    let userInfo = await AsyncStorage.getItem('userInfo');
-    userInfo = JSON.parse(userInfo);
-
-    console.log(
-      'Request Payload:',
-      username,
-      password,
-      userInfo,
-      typeof userInfo.jwt_token
-    );
-
-    axios
-      .post(
-        `${BASE_URL}/login`,
-        {
-          username,
-          password,
-        },
-        {
-          headers: {
-            Authorization: 'Bearer ' + userInfo.jwt_token,
-          },
-        }
-      )
-      .then((res) => {
-        let userInfo = res.data;
-        console.log(userInfo);
-        setUserInfo(userInfo);
-        AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
-        setIsLoading(false);
-      })
-      .catch((e) => {
-        console.log(`Login error: ${e.response.data}`);
-
-        console.log('Login error:', e);
-
-        // Log specific properties of the error object
-        console.log('Error status:', e.response.status);
-        console.log('Error data:', e.response.data);
-        setIsLoading(false);
-      });
-  };
+  const { isLoading, login } = useContext(AuthContext);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -225,6 +185,15 @@ const Login = () => {
             >
               <Text style={styles.btnText}>Login</Text>
             </TouchableOpacity>
+
+            <View style={{ flexDirection: 'row', marginTop: 20 }}>
+              <Text>Don't have an account? </Text>
+              <TouchableOpacity
+                onPress={() => router.replace('./registration')}
+              >
+                <Text style={styles.link}>Create an account</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </ScrollView>

@@ -100,7 +100,7 @@ const Registration = () => {
   };
 
   const handleBackPress = () => {
-    router.replace('../');
+    router.replace('../screens/logreg');
   };
 
   // const handleRegistration = async () => {
@@ -162,6 +162,10 @@ const Registration = () => {
         AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
         setIsLoading(false);
         console.log(userInfo);
+        Alert.alert(
+          'Activate your account! Please open the link we sent to your email.'
+        );
+        router.replace('../login');
       })
       .catch((e) => {
         console.log(`register error ${e}`);
