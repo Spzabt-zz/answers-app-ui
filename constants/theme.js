@@ -15,6 +15,8 @@ const COLORS = {
   darkBlue: '#10151c',
   red: '#FF0000',
   red2: '#d23333',
+
+  blue: '#353bf9',
 };
 
 const FONT = {

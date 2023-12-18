@@ -223,14 +223,25 @@ const Chat = () => {
         }}
       />
 
-      <Text>Username: {username}</Text>
+      <Text>{username}</Text>
       <FlatList
         data={messages}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={stylesChat.messageContainer}>
-            <Text style={stylesChat.messageText}>{item.userQuestion}</Text>
-            <Text style={stylesChat.messageText}>{item.aiResponse}</Text>
+            <View style={{ /*flexDirection: 'row',*/ marginTop: 20 }}>
+              <Text style={[stylesChat.messageText, { color: COLORS.red2 }]}>
+                You{' '}
+              </Text>
+              <Text style={stylesChat.messageText}>{item.userQuestion}</Text>
+            </View>
+
+            <View style={{ /*flexDirection: 'row',*/ marginTop: 20 }}>
+              <Text style={[stylesChat.messageText, { color: COLORS.blue }]}>
+                Chat{' '}
+              </Text>
+              <Text style={stylesChat.messageText}>{item.aiResponse}</Text>
+            </View>
           </View>
         )}
       />
