@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Stack, router } from 'expo-router';
+import { Link, Stack, router } from 'expo-router';
 import {
   Text,
   SafeAreaView,
@@ -11,8 +11,8 @@ import {
   TextInput,
 } from 'react-native';
 
-import { COLORS, SIZES, icons } from '../../constants';
-import { ScreenHeaderBtn } from '../../components';
+import { COLORS, SIZES, icons } from '../../../constants';
+import { ScreenHeaderBtn } from '../../../components';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Spinner from 'react-native-loading-spinner-overlay';
 import axios from 'axios';
@@ -66,6 +66,7 @@ const Login = () => {
 
   const handleBackPress = () => {
     router.replace('../screens/logreg');
+    //<Link href={'../screens/logreg'} />;
   };
 
   const BASE_URL = 'https://answers-ccff058443b8.herokuapp.com/api/v1/auth';

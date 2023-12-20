@@ -138,7 +138,7 @@ export const AuthProvider = ({ children }) => {
             // Handle error
             if (userInfo) {
               Alert.alert('Your session expired, please sign in.');
-              router.replace('../security/login');
+              router.replace('/(drawer)/security/login');
             }
             console.error(error.response.data);
           });

@@ -1,20 +1,9 @@
-import React, { useState, useContext } from 'react';
+import React from 'react';
 import { Stack } from 'expo-router';
-import {
-  View,
-  ScrollView,
-  SafeAreaView,
-  Text,
-  StyleSheet,
-  Alert,
-} from 'react-native';
+import { View, ScrollView, SafeAreaView, Text, StyleSheet } from 'react-native';
 
-import { COLORS, icons, images, SIZES } from '../../constants';
-import { ScreenHeaderBtn, LoginRegisterBtn } from '../../components';
-import { AuthContext } from '../context/AuthContext';
-import SplashScreen from './SplashScreen';
-import Chat from './chat';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { COLORS, icons, SIZES } from '../../../constants';
+import { ScreenHeaderBtn, LoginRegisterBtn } from '../../../components';
 
 const styles = StyleSheet.create({
   container: {
@@ -48,9 +37,7 @@ const Logreg = () => {
               activeOpacity={1}
             />
           ),
-          headerRight: () => (
-            <ScreenHeaderBtn iconUrl={icons.menu} dimension="100%" />
-          ),
+
           headerTitle: '',
         }}
       />

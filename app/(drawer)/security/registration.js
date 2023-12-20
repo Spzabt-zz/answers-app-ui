@@ -5,6 +5,7 @@ import axios, { HttpStatusCode } from 'axios';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { AuthContext } from '../context/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Drawer } from 'expo-router/drawer';
 
 import {
   Text,
@@ -18,8 +19,8 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import { SIZES, COLORS, icons } from '../../constants';
-import { ScreenHeaderBtn } from '../../components';
+import { SIZES, COLORS, icons } from '../../../constants';
+import { ScreenHeaderBtn } from '../../../components';
 
 const styles = StyleSheet.create({
   container: {
@@ -100,7 +101,7 @@ const Registration = () => {
   };
 
   const handleBackPress = () => {
-    router.replace('../screens/logreg');
+    router.replace('/(drawer)/screens/logreg');
   };
 
   // const handleRegistration = async () => {

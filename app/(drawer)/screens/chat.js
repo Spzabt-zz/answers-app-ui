@@ -15,9 +15,9 @@ import {
 import axios from 'axios';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { AuthContext } from '../context/AuthContext';
-import { COLORS, SIZES, icons } from '../../constants';
-import { ScreenHeaderBtn } from '../../components';
-import { styles } from '../../components/common/header/screenheader.style';
+import { COLORS, SIZES, icons } from '../../../constants';
+import { ScreenHeaderBtn } from '../../../components';
+import { styles } from '../../../components/common/header/screenheader.style';
 
 const stylesChat = StyleSheet.create({
   container: {
@@ -171,7 +171,7 @@ const Chat = () => {
     );
 
     setMessages(response.data.chat_messages);
-    console.log(response.data);
+    //console.log(response.data);
   };
 
   useEffect(() => {
@@ -216,6 +216,7 @@ const Chat = () => {
           //     }}
           //   />
           // ),
+          headerLeft: () => <Text>{username}</Text>,
           headerRight: () => (
             <ScreenHeaderBtn iconUrl={icons.menu} dimension="100%" />
           ),
@@ -223,7 +224,6 @@ const Chat = () => {
         }}
       />
 
-      <Text>{username}</Text>
       <FlatList
         data={messages}
         keyExtractor={(item) => item.id}
@@ -236,7 +236,7 @@ const Chat = () => {
               <Text style={stylesChat.messageText}>{item.userQuestion}</Text>
             </View>
 
-            <View style={{ /*flexDirection: 'row',*/ marginTop: 20 }}>
+            <View style={{ /*flexDirection: 'row',*/ marginVertical: 20 }}>
               <Text style={[stylesChat.messageText, { color: COLORS.blue }]}>
                 Chat{' '}
               </Text>
