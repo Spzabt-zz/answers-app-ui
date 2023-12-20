@@ -65,7 +65,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
 
   const handleBackPress = () => {
-    router.replace('../screens/logreg');
+    router.replace('security/logreg');
     //<Link href={'../screens/logreg'} />;
   };
 
@@ -190,7 +190,7 @@ const Login = () => {
             <View style={{ flexDirection: 'row', marginTop: 20 }}>
               <Text>Don't have an account? </Text>
               <TouchableOpacity
-                onPress={() => router.replace('./registration')}
+                onPress={() => router.replace('security/registration')}
               >
                 <Text style={styles.link}>Create an account</Text>
               </TouchableOpacity>

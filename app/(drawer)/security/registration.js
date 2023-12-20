@@ -101,7 +101,7 @@ const Registration = () => {
   };
 
   const handleBackPress = () => {
-    router.replace('/(drawer)/screens/logreg');
+    router.replace('security/logreg');
   };
 
   // const handleRegistration = async () => {
@@ -340,7 +340,7 @@ const Registration = () => {
 
           <View style={{ flexDirection: 'row', marginTop: 20 }}>
             <Text>Already have an account? </Text>
-            <TouchableOpacity onPress={() => router.replace('./login')}>
+            <TouchableOpacity onPress={() => router.replace('security/login')}>
               <Text style={styles.link}>Login</Text>
             </TouchableOpacity>
           </View>

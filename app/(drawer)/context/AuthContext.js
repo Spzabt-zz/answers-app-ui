@@ -78,7 +78,7 @@ export const AuthProvider = ({ children }) => {
         setUserInfo(userInfo);
         AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
         setIsLoading(false);
-        router.replace('../screens/chat');
+        router.replace('chat');
       })
       .catch((e) => {
         console.log(`Login error: ${e.response.data}`);

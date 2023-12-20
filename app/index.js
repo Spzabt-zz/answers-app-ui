@@ -1,10 +1,18 @@
+// import { Redirect } from 'expo-router';
+
+// const App = () => {
+//   return <Redirect href={'/(drawer)/home'} />;
+// };
+
+// export default App;
+
 import React, { useContext } from 'react';
 import { Redirect } from 'expo-router';
 import { StyleSheet } from 'react-native';
 
 import { SIZES } from '../constants';
 import { AuthContext } from './(drawer)/context/AuthContext';
-import SplashScreen from './(drawer)/screens/SplashScreen';
+import { SplashScreen } from '../components';
 
 const styles = StyleSheet.create({
   container: {
@@ -32,10 +40,10 @@ const App = () => {
         // <Redirect href={'screens/SplashScreen'} />
         <SplashScreen />
       ) : userInfo.jwt_token ? (
-        <Redirect href={'/(drawer)/screens/chat'} />
+        <Redirect href={'/(drawer)/chat'} />
       ) : (
         // <Slot router={} />
-        <Redirect href={'/(drawer)/screens/logreg'} />
+        <Redirect href={'/(drawer)/security'} />
       )}
     </>
   );
