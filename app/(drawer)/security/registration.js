@@ -6,6 +6,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import { AuthContext } from '../context/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Drawer } from 'expo-router/drawer';
+import { DrawerActions, useNavigation } from '@react-navigation/native';
 
 import {
   Text,
@@ -84,6 +85,8 @@ const Registration = () => {
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
 
+  const navigation = useNavigation();
+
   const { isLoading, register } = useContext(AuthContext);
 
   const onSelect = (country) => {
@@ -109,7 +112,7 @@ const Registration = () => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.gray3 }}>
       <Spinner visible={isLoading} />
-      <Stack.Screen
+      <Drawer.Screen
         options={{
           headerStyle: { backgroundColor: COLORS.red2 },
           headerShadowVisible: false,
@@ -122,7 +125,14 @@ const Registration = () => {
             />
           ),
           headerRight: () => (
-            <ScreenHeaderBtn iconUrl={icons.menu} dimension="100%" />
+            <ScreenHeaderBtn
+              iconUrl={icons.menu}
+              dimension="60%"
+              handlePress={() =>
+                navigation.dispatch(DrawerActions.toggleDrawer())
+              }
+              activeOpacity={0.7}
+            />
           ),
           headerTitle: '',
         }}

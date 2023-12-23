@@ -1,5 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Link, Stack, router } from 'expo-router';
+import { Drawer } from 'expo-router/drawer';
+import { DrawerActions, useNavigation } from '@react-navigation/native';
 import {
   Text,
   SafeAreaView,
@@ -75,11 +77,12 @@ const Login = () => {
   // const [isLoading, setIsLoading] = useState(false);
 
   const { isLoading, login } = useContext(AuthContext);
+  const navigation = useNavigation();
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Spinner visible={isLoading} />
-      <Stack.Screen
+      <Drawer.Screen
         options={{
           headerStyle: { backgroundColor: COLORS.red2 },
           headerShadowVisible: false,
@@ -92,7 +95,14 @@ const Login = () => {
             />
           ),
           headerRight: () => (
-            <ScreenHeaderBtn iconUrl={icons.menu} dimension="100%" />
+            <ScreenHeaderBtn
+              iconUrl={icons.menu}
+              dimension="60%"
+              handlePress={() =>
+                navigation.dispatch(DrawerActions.toggleDrawer())
+              }
+              activeOpacity={0.7}
+            />
           ),
           headerTitle: '',
         }}

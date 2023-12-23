@@ -6,8 +6,14 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from 'react-native';
+import { Drawer } from 'expo-router/drawer';
+import { DrawerActions, useNavigation } from '@react-navigation/native';
+import { SIZES, COLORS, icons } from '../../../constants';
+import { ScreenHeaderBtn } from '../../../components';
 
 const AdminPanelScreen = () => {
+  const navigation = useNavigation();
+
   const [userData, setUserData] = useState([]);
 
   // Placeholder data
@@ -50,6 +56,32 @@ const AdminPanelScreen = () => {
 
   return (
     <View style={styles.container}>
+      <Drawer.Screen
+        options={{
+          headerStyle: { backgroundColor: COLORS.red2 },
+          headerShadowVisible: false,
+          statusBarColor: COLORS.darkBlue,
+          headerLeft: () => (
+            <ScreenHeaderBtn
+              iconUrl={icons.moderator}
+              dimension="60%"
+              activeOpacity={1}
+            />
+          ),
+          headerRight: () => (
+            <ScreenHeaderBtn
+              iconUrl={icons.menu}
+              dimension="60%"
+              handlePress={() =>
+                navigation.dispatch(DrawerActions.toggleDrawer())
+              }
+              activeOpacity={0.7}
+            />
+          ),
+          headerTitle: 'Admin Panel',
+        }}
+      />
+
       <FlatList
         data={userData}
         keyExtractor={(item) => item.id.toString()}

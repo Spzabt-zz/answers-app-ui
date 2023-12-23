@@ -12,13 +12,6 @@ const CustomDrawerContent = (props) => {
   const { userInfo, isJwtExpired, isUserLoggedIn, logout } =
     useContext(AuthContext);
 
-  // <DrawerContentScrollView>
-  /* {userInfo && !isJwtExpired && isUserLoggedIn && (
-        <Button title="Logout" color="red" onPress={logout} />
-      )} */
-
-  /* </DrawerContentScrollView> */
-
   return (
     <DrawerContentScrollView {...props}>
       {userInfo && !isJwtExpired && isUserLoggedIn && (
@@ -38,6 +31,7 @@ const Layout = () => {
     <Drawer
       screenOptions={{
         headerShown: false,
+        drawerPosition: 'right',
       }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
     >

@@ -18,6 +18,8 @@ import { AuthContext } from '../context/AuthContext';
 import { COLORS, SIZES, icons } from '../../../constants';
 import { ScreenHeaderBtn } from '../../../components';
 import { styles } from '../../../components/common/header/screenheader.style';
+import { Drawer } from 'expo-router/drawer';
+import { DrawerActions, useNavigation } from '@react-navigation/native';
 
 const stylesChat = StyleSheet.create({
   container: {
@@ -60,6 +62,8 @@ const stylesChat = StyleSheet.create({
 });
 
 const Chat = () => {
+  const navigation = useNavigation();
+
   const { userInfo, isLoading, logout } = useContext(AuthContext);
   // console.log({ userInfo });
   const [username, setUsername] = useState('');
@@ -224,25 +228,29 @@ const Chat = () => {
   return (
     <View style={stylesChat.container}>
       <Spinner visible={isLoading} />
-      <Stack.Screen
+      <Drawer.Screen
         options={{
           headerStyle: { backgroundColor: COLORS.red2 },
           headerShadowVisible: false,
           statusBarColor: COLORS.darkBlue,
-          // headerLeft: () => (
-          //   <ScreenHeaderBtn
-          //     iconUrl={icons.left}
-          //     dimension="60%"
-          //     handlePress={() => {
-          //       router.replace('./logreg');
-          //     }}
-          //   />
-          // ),
-          headerLeft: () => <Text>{username}</Text>,
-          headerRight: () => (
-            <ScreenHeaderBtn iconUrl={icons.menu} dimension="100%" />
+          headerLeft: () => (
+            <ScreenHeaderBtn
+              iconUrl={icons.moderator}
+              dimension="60%"
+              activeOpacity={1}
+            />
           ),
-          headerTitle: '',
+          headerRight: () => (
+            <ScreenHeaderBtn
+              iconUrl={icons.menu}
+              dimension="60%"
+              handlePress={() =>
+                navigation.dispatch(DrawerActions.toggleDrawer())
+              }
+              activeOpacity={0.7}
+            />
+          ),
+          headerTitle: username,
         }}
       />
 

@@ -1,6 +1,16 @@
 import React from 'react';
 import { Stack } from 'expo-router';
-import { View, ScrollView, SafeAreaView, Text, StyleSheet } from 'react-native';
+import { Drawer } from 'expo-router/drawer';
+import { DrawerToggleButton } from '@react-navigation/drawer';
+import { DrawerActions, useNavigation } from '@react-navigation/native';
+import {
+  View,
+  ScrollView,
+  SafeAreaView,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 
 import { COLORS, icons, SIZES } from '../../../constants';
 import { ScreenHeaderBtn, LoginRegisterBtn } from '../../../components';
@@ -23,9 +33,11 @@ const styles = StyleSheet.create({
 });
 
 const Logreg = () => {
+  const navigation = useNavigation();
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>
-      <Stack.Screen
+      <Drawer.Screen
         options={{
           headerStyle: { backgroundColor: COLORS.lightWhite },
           headerShadowVisible: false,
@@ -35,6 +47,16 @@ const Logreg = () => {
               iconUrl={icons.moderator}
               dimension="60%"
               activeOpacity={1}
+            />
+          ),
+          headerRight: () => (
+            <ScreenHeaderBtn
+              iconUrl={icons.menu}
+              dimension="60%"
+              handlePress={() =>
+                navigation.dispatch(DrawerActions.toggleDrawer())
+              }
+              activeOpacity={0.7}
             />
           ),
 

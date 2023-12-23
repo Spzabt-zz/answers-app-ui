@@ -7,8 +7,14 @@ import {
   StyleSheet,
 } from 'react-native';
 import { AuthContext } from '../context/AuthContext';
+import { Drawer } from 'expo-router/drawer';
+import { DrawerActions, useNavigation } from '@react-navigation/native';
+import { SIZES, COLORS, icons } from '../../../constants';
+import { ScreenHeaderBtn } from '../../../components';
 
 const ProfileScreen = () => {
+  const navigation = useNavigation();
+
   const { userInfo, changePassword } = useContext(AuthContext);
 
   const [oldPassword, setOldPassword] = useState('');
@@ -25,6 +31,32 @@ const ProfileScreen = () => {
 
   return (
     <View style={styles.container}>
+      <Drawer.Screen
+        options={{
+          headerStyle: { backgroundColor: COLORS.red2 },
+          headerShadowVisible: false,
+          statusBarColor: COLORS.darkBlue,
+          headerLeft: () => (
+            <ScreenHeaderBtn
+              iconUrl={icons.moderator}
+              dimension="60%"
+              activeOpacity={1}
+            />
+          ),
+          headerRight: () => (
+            <ScreenHeaderBtn
+              iconUrl={icons.menu}
+              dimension="60%"
+              handlePress={() =>
+                navigation.dispatch(DrawerActions.toggleDrawer())
+              }
+              activeOpacity={0.7}
+            />
+          ),
+          headerTitle: 'Profile',
+        }}
+      />
+
       <Text style={styles.header}>User Profile</Text>
       <Text>Email: {userInfo.email}</Text>
       <Text>Name: {userInfo.name}</Text>
