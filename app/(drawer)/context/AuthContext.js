@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import React, { createContext, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
-import { router } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 
 export const AuthContext = createContext();
 
@@ -10,6 +10,8 @@ export const AuthProvider = ({ children }) => {
   const BASE_URL = 'https://answers-ccff058443b8.herokuapp.com/api/v1/auth';
 
   const [userInfo, setUserInfo] = useState({});
+  const [isJwtExpired, setIsJwtExpired] = useState({});
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [splashLoading, setSplashLoading] = useState(false);
 
@@ -38,6 +40,11 @@ export const AuthProvider = ({ children }) => {
         AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
         setIsLoading(false);
         console.log(userInfo);
+        setIsUserLoggedIn(false);
+        Alert.alert(
+          'Activate your account! Please open the link we sent to your email.'
+        );
+        router.push('(drawer)/security/login');
       })
       .catch((e) => {
         console.log(`register error ${e}`);
@@ -51,13 +58,15 @@ export const AuthProvider = ({ children }) => {
     let userInfo = await AsyncStorage.getItem('userInfo');
     userInfo = JSON.parse(userInfo);
 
-    console.log(
-      'Request Payload:',
-      username,
-      password,
-      userInfo,
-      typeof userInfo.jwt_token
-    );
+    userInfo
+      ? console.log(
+          'Request Payload:',
+          username,
+          password,
+          userInfo,
+          typeof userInfo.jwt_token
+        )
+      : console.log(userInfo);
 
     axios
       .post(
@@ -68,7 +77,9 @@ export const AuthProvider = ({ children }) => {
         },
         {
           headers: {
-            Authorization: 'Bearer ' + userInfo.jwt_token,
+            headers: userInfo
+              ? { Authorization: 'Bearer ' + userInfo.jwt_token }
+              : {},
           },
         }
       )
@@ -76,9 +87,12 @@ export const AuthProvider = ({ children }) => {
         let userInfo = res.data;
         console.log(userInfo);
         setUserInfo(userInfo);
+        setIsJwtExpired(false);
+        setIsUserLoggedIn(true);
         AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
         setIsLoading(false);
-        router.replace('chat');
+        router.push('(drawer)/chat');
+        // <Redirect href={'(drawe)/chat'} />;
       })
       .catch((e) => {
         console.log(`Login error: ${e.response.data}`);
@@ -100,17 +114,21 @@ export const AuthProvider = ({ children }) => {
         `${BASE_URL}/logout`,
         {},
         {
-          headers: { Authorization: `Bearer ${userInfo.access_token}` },
+          headers: { Authorization: `Bearer ${userInfo.jwt_token}` },
         }
       )
       .then((res) => {
         console.log(res.data);
         AsyncStorage.removeItem('userInfo');
         setUserInfo({});
+        setIsJwtExpired(true);
+        setIsUserLoggedIn(false);
         setIsLoading(false);
+        router.push('(drawer)/security/logreg');
       })
       .catch((e) => {
         console.log(`logout error ${e}`);
+        console.log(e.response.data);
         setIsLoading(false);
       });
   };
@@ -124,32 +142,66 @@ export const AuthProvider = ({ children }) => {
 
       //check if token expired
       if (userInfo) {
-        await axios
-          .get('https://answers-ccff058443b8.herokuapp.com/api/v1', {
-            headers: {
-              Authorization: 'Bearer ' + userInfo.jwt_token,
-            },
-          })
-          .then((response) => {
-            // Handle success
-            console.log(response.data);
-          })
-          .catch((error) => {
-            // Handle error
-            if (userInfo) {
-              Alert.alert('Your session expired, please sign in.');
-              router.replace('/(drawer)/security/login');
+        // await axios
+        //   .get('https://answers-ccff058443b8.herokuapp.com/api/v1', {
+        //     headers: {
+        //       Authorization: 'Bearer ' + userInfo.jwt_token,
+        //     },
+        //   })
+        //   .then((response) => {
+        //     // Handle success
+        //     console.log(response.data);
+        //   })
+        //   .catch((error) => {
+        //     // Handle error
+        //     if (userInfo) {
+        //       Alert.alert('Your session expired, please sign in.');
+        //       router.replace('/(drawer)/security/login');
+        //     }
+        //     console.error(error.response.data);
+        //   });
+        try {
+          let isJwtExpiredResponse = await axios.get(
+            'https://answers-ccff058443b8.herokuapp.com/api/v1/auth/check-token',
+            {
+              headers: {
+                Authorization: 'Bearer ' + userInfo.jwt_token,
+              },
             }
-            console.error(error.response.data);
-          });
+          );
+          let isTokenExpired = isJwtExpiredResponse.data.is_jwt_token_expired;
+          setIsJwtExpired(isTokenExpired);
+
+          let isUserActivatedResponse = await axios.get(
+            'https://answers-ccff058443b8.herokuapp.com/api/v1/auth/check-user-activation?user_id=' +
+              userInfo.id,
+            {
+              headers: {
+                Authorization: 'Bearer ' + userInfo.jwt_token,
+              },
+            }
+          );
+          let isUserActivated = isUserActivatedResponse.data.activation_status;
+
+          if (isUserActivated) {
+            setIsUserLoggedIn(true);
+          } else {
+            setIsUserLoggedIn(false);
+          }
+
+          console.log(isJwtExpiredResponse.data);
+        } catch (error) {
+          Alert.alert('Something went wrong. Check your internet connection!');
+          console.error(error.response.data);
+        }
 
         setUserInfo(userInfo);
+        console.log('in isLoggedIn method, userInfo: ' + userInfo.jwt_token);
       }
 
-      await new Promise((r) => setTimeout(r, 5000));
+      // await new Promise((r) => setTimeout(r, 5000));
 
       setSplashLoading(false);
-      console.log('in isLoggedIn method, userInfo: ' + userInfo.jwt_token);
     } catch (e) {
       setSplashLoading(false);
       console.log(`is logged in error ${e}`);
@@ -166,6 +218,8 @@ export const AuthProvider = ({ children }) => {
         isLoading,
         userInfo,
         splashLoading,
+        isJwtExpired,
+        isUserLoggedIn,
         register,
         login,
         logout,

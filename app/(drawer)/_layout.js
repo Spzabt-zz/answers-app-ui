@@ -1,14 +1,45 @@
-import { AuthProvider } from './context/AuthContext';
+import { AuthContext } from './context/AuthContext';
 
-import * as React from 'react';
+import { useContext } from 'react';
 import { Drawer } from 'expo-router/drawer';
+import { Button, View } from 'react-native';
+import {
+  DrawerItemList,
+  DrawerContentScrollView,
+} from '@react-navigation/drawer';
+
+const CustomDrawerContent = (props) => {
+  const { userInfo, isJwtExpired, isUserLoggedIn, logout } =
+    useContext(AuthContext);
+
+  // <DrawerContentScrollView>
+  /* {userInfo && !isJwtExpired && isUserLoggedIn && (
+        <Button title="Logout" color="red" onPress={logout} />
+      )} */
+
+  /* </DrawerContentScrollView> */
+
+  return (
+    <DrawerContentScrollView {...props}>
+      {userInfo && !isJwtExpired && isUserLoggedIn && (
+        <View>
+          <Button title="Logout" color="red" onPress={logout} />
+        </View>
+      )}
+      <DrawerItemList {...props} />
+    </DrawerContentScrollView>
+  );
+};
 
 const Layout = () => {
+  const { userInfo, isJwtExpired, isUserLoggedIn } = useContext(AuthContext);
+
   return (
     <Drawer
       screenOptions={{
         headerShown: false,
       }}
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
       <Drawer.Screen
         name="security"
@@ -17,27 +48,60 @@ const Layout = () => {
           title: 'Home',
         }}
       />
-      <Drawer.Screen
-        name="chat"
-        options={{
-          drawerLabel: 'Chat',
-          title: 'Chat',
-        }}
-      />
-      <Drawer.Screen
-        name="profile"
-        options={{
-          drawerLabel: 'Profile',
-          title: 'Profile',
-        }}
-      />
-      <Drawer.Screen
-        name="admin"
-        options={{
-          drawerLabel: 'Admin panel',
-          title: 'Admin panel',
-        }}
-      />
+
+      {userInfo && !isJwtExpired && isUserLoggedIn ? (
+        <Drawer.Screen
+          name="chat"
+          options={{
+            drawerLabel: 'Chat',
+            title: 'Chat',
+          }}
+        />
+      ) : (
+        <Drawer.Screen
+          name="chat"
+          options={{
+            drawerItemStyle: { height: 0 },
+          }}
+        />
+      )}
+
+      {userInfo && !isJwtExpired && isUserLoggedIn ? (
+        <Drawer.Screen
+          name="profile"
+          options={{
+            drawerLabel: 'Profile',
+            title: 'Profile',
+          }}
+        />
+      ) : (
+        <Drawer.Screen
+          name="profile"
+          options={{
+            drawerItemStyle: { height: 0 },
+          }}
+        />
+      )}
+
+      {userInfo &&
+      userInfo.role === 'ROLE_ADMIN' &&
+      !isJwtExpired &&
+      isUserLoggedIn ? (
+        <Drawer.Screen
+          name="admin"
+          options={{
+            drawerLabel: 'Admin panel',
+            title: 'Admin panel',
+          }}
+        />
+      ) : (
+        <Drawer.Screen
+          name="admin"
+          options={{
+            drawerItemStyle: { height: 0 },
+          }}
+        />
+      )}
     </Drawer>
   );
 };

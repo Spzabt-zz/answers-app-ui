@@ -119,7 +119,27 @@ const Chat = () => {
 
       if (chatInfo) {
         chatInfo = JSON.parse(chatInfo);
+
+        try {
+          let response = await axios.get(
+            'https://answers-ccff058443b8.herokuapp.com/api/v1/chats/' +
+              userInfo.id,
+            {
+              headers: {
+                Authorization: 'Bearer ' + userInfo.jwt_token,
+              },
+            }
+          );
+
+          chatInfo = response.data;
+        } catch (error) {
+          console.log(error.response.data);
+          return null;
+        }
+
         setChat(chatInfo);
+        await AsyncStorage.setItem('chatInfo', JSON.stringify(chatInfo));
+
         console.log(chatInfo);
         //console.log(chat);
 
@@ -175,29 +195,31 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    console.log('in chat');
-    getUsername();
+    if (userInfo && Object.keys(userInfo).length !== 0) {
+      console.log('in chat');
+      getUsername();
 
-    const fetchData = async () => {
-      try {
-        // Retrieve chat information from AsyncStorage
-        let chat = await isChatExists();
+      const fetchData = async () => {
+        try {
+          // Retrieve chat information from AsyncStorage
+          let chat = await isChatExists();
 
-        // If chat exists, setMessages
-        if (chat !== null) {
-          fetchMessages(chat);
-        } else {
-          // If chat doesn't exist, create a new chat
-          console.log('1');
-          chat = await createChat();
-          fetchMessages(chat);
+          // If chat exists, setMessages
+          if (chat !== null) {
+            fetchMessages(chat);
+          } else {
+            // If chat doesn't exist, create a new chat
+            console.log('1');
+            chat = await createChat();
+            fetchMessages(chat);
+          }
+        } catch (error) {
+          console.error(error.response.data);
         }
-      } catch (error) {
-        console.error(error.response.data);
-      }
-    };
-    fetchData();
-  }, []);
+      };
+      fetchData();
+    }
+  }, [userInfo]);
 
   return (
     <View style={stylesChat.container}>

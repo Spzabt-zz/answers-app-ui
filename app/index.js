@@ -32,14 +32,14 @@ const styles = StyleSheet.create({
 });
 
 const App = () => {
-  const { userInfo, splashLoading } = useContext(AuthContext);
+  const { userInfo, splashLoading, isJwtExpired } = useContext(AuthContext);
 
   return (
     <>
       {splashLoading ? (
         // <Redirect href={'screens/SplashScreen'} />
         <SplashScreen />
-      ) : userInfo.jwt_token ? (
+      ) : userInfo.jwt_token && !isJwtExpired ? (
         <Redirect href={'/(drawer)/chat'} />
       ) : (
         // <Slot router={} />

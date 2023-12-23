@@ -84,6 +84,8 @@ const Registration = () => {
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
 
+  const { isLoading, register } = useContext(AuthContext);
+
   const onSelect = (country) => {
     setCountryCode(country.cca2);
     setCountry(country);
@@ -102,76 +104,6 @@ const Registration = () => {
 
   const handleBackPress = () => {
     router.replace('security/logreg');
-  };
-
-  // const handleRegistration = async () => {
-  //   try {
-  //     const response = await axios.post(baseUrl + REGISTRATION, {
-  //       email,
-  //       fullName,
-  //       username,
-  //       phoneNumber,
-  //       password,
-  //       repeatPassword,
-  //     });
-
-  //     if (response.status == HttpStatusCode.Created) {
-  //       // Registration successful, you might want to handle this in your application
-  //       Alert.alert(
-  //         'Success',
-  //         'Registration successful! Please click the activation link we sent to your email.'
-  //       );
-  //     } else {
-  //       // Registration failed, display the error message
-  //       Alert.alert('Error', response.data.error || 'Registration failed');
-  //     }
-
-  //     handleBackPress();
-  //   } catch (error) {
-  //     console.error('Error during registration:', error.response.data.error);
-  //     Alert.alert('Error', 'An unexpected error occurred');
-  //   }
-  // };
-
-  const BASE_URL = 'https://answers-ccff058443b8.herokuapp.com/api/v1/auth';
-
-  const [userInfo, setUserInfo] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
-
-  const register = (
-    email,
-    fullName,
-    username,
-    phoneNumber,
-    password,
-    repeatPassword
-  ) => {
-    setIsLoading(true);
-
-    axios
-      .post(`${BASE_URL}/registration`, {
-        email,
-        fullName,
-        username,
-        phoneNumber,
-        password,
-        repeatPassword,
-      })
-      .then((res) => {
-        let userInfo = res.data;
-        setUserInfo(userInfo);
-        AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
-        setIsLoading(false);
-        console.log(userInfo);
-        Alert.alert(
-          'Activate your account! Please open the link we sent to your email.'
-        );
-        router.replace('../login');
-      })
-      .catch((e) => {
-        console.log(`register error ${e}`);
-        setIsLoading(false);
-      });
   };
 
   return (

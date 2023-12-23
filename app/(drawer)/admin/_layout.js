@@ -1,9 +1,5 @@
 import { Stack } from 'expo-router';
 
-const StackNavigator = () => (
-  <Stack>
-    <Stack.Screen name="AdminPanel" />
-  </Stack>
-);
+const StackNavigator = () => <Stack></Stack>;
 
 export default StackNavigator;
