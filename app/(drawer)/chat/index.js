@@ -125,32 +125,30 @@ const Chat = () => {
   const isChatExists = async () => {
     try {
       let chatInfo = await AsyncStorage.getItem('chatInfo');
+      chatInfo = JSON.parse(chatInfo);
+
+      try {
+        let response = await axios.get(
+          'https://answers-ccff058443b8.herokuapp.com/api/v1/chats/' +
+            userInfo.id,
+          {
+            headers: {
+              Authorization: 'Bearer ' + userInfo.jwt_token,
+            },
+          }
+        );
+
+        chatInfo = response.data;
+      } catch (error) {
+        console.log(error.response.data);
+        return null;
+      }
 
       if (chatInfo) {
-        chatInfo = JSON.parse(chatInfo);
-
-        try {
-          let response = await axios.get(
-            'https://answers-ccff058443b8.herokuapp.com/api/v1/chats/' +
-              userInfo.id,
-            {
-              headers: {
-                Authorization: 'Bearer ' + userInfo.jwt_token,
-              },
-            }
-          );
-
-          chatInfo = response.data;
-        } catch (error) {
-          console.log(error.response.data);
-          return null;
-        }
-
         setChat(chatInfo);
         await AsyncStorage.setItem('chatInfo', JSON.stringify(chatInfo));
 
         console.log(chatInfo);
-        //console.log(chat);
 
         return chatInfo;
       }
