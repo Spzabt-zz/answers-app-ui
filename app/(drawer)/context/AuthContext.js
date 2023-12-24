@@ -46,9 +46,29 @@ export const AuthProvider = ({ children }) => {
         );
         router.push('(drawer)/security/login');
       })
-      .catch((e) => {
-        console.log(`register error ${e}`);
+      .catch((error) => {
+        console.log(`register error ${error}`);
         setIsLoading(false);
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          const { data } = error.response;
+
+          if (data && data.field_errors) {
+            // Handle validation errors
+            // You can display these errors to the user
+            Alert.alert('Validation Error', data.field_errors.join('\n'));
+          } else {
+            // Handle other types of errors
+            Alert.alert('Error', 'An error occurred during registration.');
+          }
+        } else if (error.request) {
+          // The request was made but no response was received
+          Alert.alert('Network Error', 'No response received from the server.');
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.error('Error', error.message);
+        }
       });
   };
 
@@ -94,14 +114,29 @@ export const AuthProvider = ({ children }) => {
         router.push('(drawer)/chat');
         // <Redirect href={'(drawe)/chat'} />;
       })
-      .catch((e) => {
-        console.log(`Login error: ${e.response.data}`);
+      .catch((error) => {
+        console.log(`Login error: ${error.response.data}`);
 
-        console.log('Login error:', e);
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          const { data } = error.response;
 
-        // Log specific properties of the error object
-        console.log('Error status:', e.response.status);
-        console.log('Error data:', e.response.data);
+          if (data && data.field_errors) {
+            // Handle validation errors
+            // You can display these errors to the user
+            Alert.alert('Validation Error', data.field_errors.join('\n'));
+          } else {
+            // Handle other types of errors
+            Alert.alert('Error', 'An error occurred during login.');
+          }
+        } else if (error.request) {
+          // The request was made but no response was received
+          Alert.alert('Network Error', 'No response received from the server.');
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.error('Error', error.message);
+        }
         setIsLoading(false);
       });
   };
@@ -142,24 +177,6 @@ export const AuthProvider = ({ children }) => {
 
       //check if token expired
       if (userInfo) {
-        // await axios
-        //   .get('https://answers-ccff058443b8.herokuapp.com/api/v1', {
-        //     headers: {
-        //       Authorization: 'Bearer ' + userInfo.jwt_token,
-        //     },
-        //   })
-        //   .then((response) => {
-        //     // Handle success
-        //     console.log(response.data);
-        //   })
-        //   .catch((error) => {
-        //     // Handle error
-        //     if (userInfo) {
-        //       Alert.alert('Your session expired, please sign in.');
-        //       router.replace('/(drawer)/security/login');
-        //     }
-        //     console.error(error.response.data);
-        //   });
         try {
           let isJwtExpiredResponse = await axios.get(
             'https://answers-ccff058443b8.herokuapp.com/api/v1/auth/check-token',

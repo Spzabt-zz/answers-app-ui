@@ -54,6 +54,7 @@ const stylesChat = StyleSheet.create({
     padding: 10,
     backgroundColor: 'blue',
     borderRadius: 5,
+    marginLeft: 10,
   },
   sendButtonText: {
     color: 'white',
@@ -64,7 +65,7 @@ const stylesChat = StyleSheet.create({
 const Chat = () => {
   const navigation = useNavigation();
 
-  const { userInfo, isLoading, logout } = useContext(AuthContext);
+  const { userInfo } = useContext(AuthContext);
   // console.log({ userInfo });
   const [username, setUsername] = useState('');
   const [chat, setChat] = useState({});
@@ -73,6 +74,10 @@ const Chat = () => {
   const [newMessage, setNewMessage] = useState('');
   const [aiResponse, setAiResponse] = useState('');
   const [chatExists, setChatExists] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const maxCharacters = 1000;
 
   const getUsername = async () => {
     try {
@@ -156,6 +161,8 @@ const Chat = () => {
   };
 
   const sendMessage = async () => {
+    setIsLoading(true);
+
     try {
       const response = await axios.post(
         `https://answers-ccff058443b8.herokuapp.com/api/v1/${chat.id}/chat_messages?user_question=${newMessage}`,
@@ -179,7 +186,9 @@ const Chat = () => {
       // Clear the input field
       setNewMessage('');
       console.log(response.data);
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       console.error(error.response.data);
     }
   };
@@ -200,6 +209,7 @@ const Chat = () => {
 
   useEffect(() => {
     if (userInfo && Object.keys(userInfo).length !== 0) {
+      setIsLoading(true);
       console.log('in chat');
       getUsername();
 
@@ -217,7 +227,10 @@ const Chat = () => {
             chat = await createChat();
             fetchMessages(chat);
           }
+
+          setIsLoading(false);
         } catch (error) {
+          setIsLoading(false);
           console.error(error.response.data);
         }
       };
@@ -280,8 +293,14 @@ const Chat = () => {
           style={stylesChat.input}
           placeholder="Type your message"
           value={newMessage}
-          onChangeText={(text) => setNewMessage(text)}
+          onChangeText={(text) => {
+            if (text.length <= maxCharacters) {
+              setNewMessage(text);
+            }
+          }}
+          multiline={true}
         />
+        <Text>{`${newMessage.length}/${maxCharacters}`}</Text>
         <TouchableOpacity style={stylesChat.sendButton} onPress={sendMessage}>
           <Text style={stylesChat.sendButtonText}>Send</Text>
         </TouchableOpacity>

@@ -19,6 +19,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Spinner from 'react-native-loading-spinner-overlay';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
+import { Fontisto } from '@expo/vector-icons';
 
 const styles = StyleSheet.create({
   container: {
@@ -65,10 +66,15 @@ const Login = () => {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
 
   const handleBackPress = () => {
     router.replace('security/logreg');
     //<Link href={'../screens/logreg'} />;
+  };
+
+  const handleForgotPassword = () => {
+    router.replace('security/ForgotPassword');
   };
 
   const BASE_URL = 'https://answers-ccff058443b8.herokuapp.com/api/v1/auth';
@@ -167,7 +173,7 @@ const Login = () => {
 
               alignItems: 'center',
               justifyContent: 'flex-start',
-              padding: SIZES.medium,
+              padding: SIZES.xSmall,
             }}
           >
             <TextInput
@@ -188,6 +194,41 @@ const Login = () => {
               secureTextEntry={true}
               autoCorrect={false}
             />
+
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: 5,
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => setRememberMe(!rememberMe)}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}
+              >
+                {rememberMe ? (
+                  <Fontisto name="checkbox-passive" size={24} color="black" />
+                ) : (
+                  <Fontisto name="checkbox-active" size={24} color="black" />
+                )}
+
+                <Text style={{ marginHorizontal: 5 }}>Remember Me</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={handleForgotPassword}
+                style={{
+                  alignContent: 'flex-end',
+                  marginHorizontal: 5,
+                }}
+              >
+                <Text style={styles.link}>Forgot Password?</Text>
+              </TouchableOpacity>
+            </View>
+
             <TouchableOpacity
               style={styles.btnContainer}
               onPress={() => {
@@ -197,7 +238,7 @@ const Login = () => {
               <Text style={styles.btnText}>Login</Text>
             </TouchableOpacity>
 
-            <View style={{ flexDirection: 'row', marginTop: 20 }}>
+            <View style={{ flexDirection: 'row', marginTop: 5 }}>
               <Text>Don't have an account? </Text>
               <TouchableOpacity
                 onPress={() => router.replace('security/registration')}

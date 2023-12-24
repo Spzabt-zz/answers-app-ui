@@ -30,6 +30,10 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     padding: SIZES.xxLarge,
   },
+  showHideButton: {
+    alignSelf: 'flex-start',
+    paddingStart: SIZES.xLarge,
+  },
   textInputStyle: {
     height: 40,
     width: '100%',
@@ -84,6 +88,7 @@ const Registration = () => {
   const [phoneNumber, setPhoneNumber] = useState('+' + country.callingCode[0]);
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigation = useNavigation();
 
@@ -107,6 +112,10 @@ const Registration = () => {
 
   const handleBackPress = () => {
     router.replace('security/logreg');
+  };
+
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -246,23 +255,25 @@ const Registration = () => {
           <TextInput
             style={styles.textInputStyle}
             placeholder="Password"
-            onChangeText={(password) => setPassword(password)}
-            defaultValue={password}
-            textContentType="password"
-            passwordRules="required: upper; required: lower; required: digit; minlength: 8;"
-            secureTextEntry={true}
+            onChangeText={(text) => setPassword(text)}
+            value={password}
+            secureTextEntry={!showPassword}
             autoCorrect={false}
           />
-
           <TextInput
             style={styles.textInputStyle}
             placeholder="Repeat Password"
-            onChangeText={(repeatPassword) => setRepeatPassword(repeatPassword)}
-            defaultValue={repeatPassword}
-            textContentType="password"
-            secureTextEntry={true}
+            onChangeText={(text) => setRepeatPassword(text)}
+            value={repeatPassword}
+            secureTextEntry={!showPassword}
             autoCorrect={false}
           />
+          <TouchableOpacity
+            style={styles.showHideButton}
+            onPress={toggleShowPassword}
+          >
+            <Text>{showPassword ? 'Hide password' : 'Show password'}</Text>
+          </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.btnContainer}
